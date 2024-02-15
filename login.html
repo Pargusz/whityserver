@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-container img {
+            max-width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .login-form input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .login-form button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #ff6600;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Animasyonu ekledik */
+            margin-top: 10px;
+        }
+
+        .login-form button:hover {
+            background-color: #e55900;
+            transform: scale(1.1); /* Mouse üstüne gelindiğinde büyüme animasyonu */
+        }
+
+        .login-form button:active {
+            transform: scale(0.9); /* Tuşa tıklandığında küçülme animasyonu */
+        }
+
+        /* Popup stilleri */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .popup-content {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .popup button {
+            padding: 10px;
+            background-color: #ff6600;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        .popup button:hover {
+            background-color: #e55900;
+        }
+
+        /* Footer stilleri */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: transparent;
+            text-align: center;
+            padding: 10px;
+            color: #fff;
+        }
+
+        footer a {
+            color: #ff6600;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function checkStoredCredentials() {
+            var savedUsername = localStorage.getItem("savedUsername");
+            var savedPassword = localStorage.getItem("savedPassword");
+
+            if (savedUsername && savedPassword) {
+                document.getElementById("username").value = savedUsername;
+                document.getElementById("password").value = savedPassword;
+            }
+        }
+
+        function checkLogin() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Giriş kontrolü
+            if (username === "admin" && password === "admin123") {
+                showPopup();
+            } else {
+                showErrorPopup();
+            }
+        }
+
+        function showPopup() {
+            var savedCredentials = localStorage.getItem("savedCredentials");
+
+            if (savedCredentials !== "evet") {
+                var popup = document.getElementById("popup");
+                popup.style.display = "flex";
+            } else {
+                closePopup();
+            }
+        }
+
+        function closePopup() {
+            var rememberCheckbox = document.getElementById("rememberCheckbox");
+
+            if (rememberCheckbox.checked) {
+                // Kullanıcı bilgilerini kaydet (simülasyon, gerçek uygulamalarda güvenlik riski taşır)
+                localStorage.setItem("savedCredentials", "evet");
+                localStorage.setItem("savedUsername", document.getElementById("username").value);
+                localStorage.setItem("savedPassword", document.getElementById("password").value);
+            } else {
+                localStorage.removeItem("savedCredentials");
+                localStorage.removeItem("savedUsername");
+                localStorage.removeItem("savedPassword");
+            }
+
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+
+            window.location.href = "index.html";
+        }
+
+        function showErrorPopup() {
+            var popup = document.getElementById("error-popup");
+            popup.style.display = "flex";
+        }
+
+        function closeErrorPopup() {
+            var popup = document.getElementById("error-popup");
+            popup.style.display = "none";
+        }
+
+        // Sayfa yüklendiğinde kaydedilmiş bilgileri kontrol et
+        window.onload = checkStoredCredentials;
+    </script>
+    <title>Whity Server</title>
+</head>
+<body>
+
+<div class="login-container">
+    <img src="img/whitylogo.png" alt="Logo">
+    <div class="login-form">
+        <input type="text" id="username" placeholder="Kullanıcı Adı">
+        <input type="password" id="password" placeholder="Şifre">
+        <button onclick="checkLogin()">Giriş Yap</button>
+    </div>
+</div>
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <p>Giriş bilgileriniz kayıt edilsin mi?</p>
+        <input type="checkbox" id="rememberCheckbox">
+        <label for="rememberCheckbox">Bir daha gösterme</label>
+        <br>
+        <button onclick="closePopup()">Evet</button>
+        <button onclick="window.location.href = 'index.html'">Hayır</button>
+    </div>
+</div>
+
+<div id="error-popup" class="popup">
+    <div class="popup-content">
+        <p>Kullanıcı adı veya şifre hatalı!</p>
+        <button onclick="closeErrorPopup()">Tamam</button>
+    </div>
+</div>
+
+<footer>
+    Created by <a href="https://www.pargusz.com" target="_blank">Pargusz</a>
+</footer>
+
+</body>
+</html>
